@@ -1,0 +1,21 @@
+{
+  "name": "snow",
+  "version": "0.0.1",
+  "description": "HTML5 snow effect",
+  "repository": "https://github.com/fforw/gulp-browserify-template.git",
+  "devDependencies": {
+    "browserify": "^7.0.3",
+    "gulp": "~3.8.10",
+    "gulp-espower": "^0.10.0",
+    "gulp-mocha": "^2.0.0",
+    "gulp-streamify": "0.0.5",
+    "gulp-uglify": "~1.0.2",
+    "gulp-util": "~3.0.1",
+    "gulp-watch": "~3.0.0",
+    "power-assert": "^0.10.0",
+    "vinyl-source-stream": "^1.0.0"
+  },
+  "dependencies": {
+    "es6-promise": "^2.0.1"
+  }
+}
