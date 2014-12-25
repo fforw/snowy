@@ -81,7 +81,7 @@ function stackBlurImage( img, canvas, radius, blurAlphaChannel )
     var w = img.width;
     var h = img.height;
 
-    console.log("wxh: ", w, h);
+    //console.log("wxh: ", w, h);
 
     canvas.style.width  = w + "px";
     canvas.style.height = h + "px";
