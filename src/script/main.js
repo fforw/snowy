@@ -145,7 +145,7 @@ window.onload = function ()
 
     for (i=0; i < NUM_FLAKES; i++)
     {
-        flakes.push(new Flake(raster, imgWidth, imgHeight, width, height, (i / flakesPerSize)|0));
+        flakes.push(new Flake(raster, imgWidth, imgHeight, width, height, NUM_FLAKE_KINDS - 1 - (i / flakesPerSize)|0));
     }
 
     var drawLoop = function ()
