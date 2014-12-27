@@ -12,16 +12,31 @@ var NUM_FLAKES = 128;
 
 var SPEED = 64;
 
-var sizesRenderDefaults = {
+// configuration options for createFlakeSizes()
+var opts = {
+    // start distance
     minZ: 100,
+    // end distance
     maxZ: 500,
+    // distance steps to draw
     zSteps: 16,
-    focusZ: 125
+    // Z-position for which there is no blur
+    focusZ: 125,
+    // can be used to adjust the overall blur strength
+    blurMultiplier: 2
 };
 
-function createFlakeSizes(opts, flakeOpts)
+/**
+ * Creates an array of canvases containing the different sizes and blurriness resulting from both
+ * a perspective projection and a simulated lens focus blurriness.
+ *
+ * See sizesRenderConfig above for configuration options.
+ *
+ * @param flakeOpts     options for createFlake
+ * @returns {Array}     array of flake canvases in decreasing order
+ */
+function createFlakeSizes(flakeOpts)
 {
-    opts = merge({}, sizesRenderDefaults, opts);
 
     var canvas = createFlake(flakeOpts);
 
@@ -40,37 +55,48 @@ function createFlakeSizes(opts, flakeOpts)
         var w = xSize / z;
         var h = ySize / z;
 
-        var blur = Math.abs( ((z - opts.focusZ) / ( (opts.maxZ - opts.focusZ) / (flakeOpts.space * 2))) | 0);
+        var blurStrength = Math.abs( ((z - opts.focusZ) / ( (opts.maxZ - opts.focusZ) / (flakeOpts.space * opts.blurMultiplier))) | 0);
         //console.debug("blur = ", blur);
 
-        var newCanvas = document.createElement("canvas");
-        newCanvas.width = width;
-        newCanvas.height = height;
+        var canvasWidth = w + 2 * blurStrength;
+        var canvasHeight = h + 2 * blurStrength;
 
-        var x = width/2 - w/2;
-        var y = height/2 - h/2;
-        newCanvas.getContext("2d").drawImage(canvas, x, y, w, h);
+        var scaled = document.createElement("canvas");
+        scaled.width = canvasWidth;
+        scaled.height = canvasHeight;
 
-        var final = document.createElement("canvas");
-        final.width = width;
-        final.height = height;
+        scaled.getContext("2d").drawImage(canvas, blurStrength, blurStrength, w, h);
 
-        blurImage(newCanvas, final, blur, true);
-        l.push(final);
+        var blurred = document.createElement("canvas");
+        blurred.width = canvasWidth;
+        blurred.height = canvasHeight;
+
+        blurImage(scaled, blurred, blurStrength, true);
+        l.push(blurred);
     }
 
     return l;
 }
 
-
-function Flake(raster, width, height, screenWidth, screenHeight, size)
+/**
+ * Encapsulates runtime information for every single flake
+ *
+ * @param raster        the array of canvases arrays
+ * @param width
+ * @param height
+ * @param screenWidth
+ * @param screenHeight
+ * @param size
+ * @constructor
+ */
+function Flake(raster, screenWidth, screenHeight, size)
 {
     var kind = ((Math.random() * raster.length) | 0);
     this.img = raster[kind][size];
     this.size = size;
 
-    this.width = width;
-    this.height = height;
+    this.width = this.img.width;
+    this.height = this.img.height;
     this.screenWidth = screenWidth;
     this.screenHeight = screenHeight;
 
@@ -89,8 +115,8 @@ Flake.prototype.randomPos = function(top)
 };
 Flake.prototype.draw = function(ctx)
 {
-    var number = (sizesRenderDefaults.maxZ - sizesRenderDefaults.minZ) / sizesRenderDefaults.zSteps;
-    var dy = SPEED / (sizesRenderDefaults.minZ + this.size * number);
+    var number = (opts.maxZ - opts.minZ) / opts.zSteps;
+    var dy = SPEED / (opts.minZ + this.size * number);
 
     var y = this.y;
     y += dy;
@@ -118,7 +144,7 @@ window.onload = function ()
 
     for (i=0; i < NUM_FLAKE_KINDS; i++)
     {
-        raster.push(createFlakeSizes({}, {
+        raster.push(createFlakeSizes({
             size: 96,
             lineWidth: [18, 16, 14, 8, 6, 3],
             space: 16,
@@ -135,9 +161,6 @@ window.onload = function ()
     document.body.appendChild(screen);
 
     var ctx = screen.getContext("2d");
-    var imgWidth = raster[0][0].width;
-    var imgHeight = raster[0][0].height;
-
 
     var flakes = [];
 
@@ -145,7 +168,8 @@ window.onload = function ()
 
     for (i=0; i < NUM_FLAKES; i++)
     {
-        flakes.push(new Flake(raster, imgWidth, imgHeight, width, height, NUM_FLAKE_KINDS - 1 - (i / flakesPerSize)|0));
+        var sizeIndex = NUM_FLAKE_KINDS - 1 - (i / flakesPerSize) | 0;
+        flakes.push(new Flake(raster, width, height, sizeIndex));
     }
 
     var drawLoop = function ()
