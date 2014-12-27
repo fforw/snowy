@@ -75,7 +75,7 @@ module.exports = function (opts)
 
     var startAngle = Math.random() * FLAKE_STEP;
 
-    // we draw one flake for line width
+    // we draw one flake per line width
     for (var i = 0; i < numLineWidths; i++)
     {
         w = opts.lineWidth[i];
