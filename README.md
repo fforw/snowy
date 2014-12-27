@@ -1,6 +1,6 @@
 # Snowy XMAS
 
-A HTML5 snow effect.
+A HTML5 snow effect with random generated snow flakes.
 
 ## Prerequisites
 
