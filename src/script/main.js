@@ -12,7 +12,7 @@ var NUM_FLAKE_KINDS = 16;
 // number of perspectivic flake layers
 var NUM_FLAKE_LAYERS = 10;
 // number of flakes to draw.
-var NUM_FLAKES = 128;
+var NUM_FLAKES = 160;
 
 // Flake speed (actual speed will randomly vary by 0.75 to 1.0 times of that)
 var SPEED = 64;
@@ -139,7 +139,53 @@ Flake.prototype.draw = function(ctx)
     ctx.drawImage(this.img, this.x, this.y);
 };
 
+function populateFlakeLayers(raster, width, height)
+{
+    var i, flakes = [];
 
+    var flakesPerSize = NUM_FLAKES / NUM_FLAKE_LAYERS;
+
+    // the number of flakes in each layer has to be reverse proportional to the flake size on that layer
+    // because smaller flakes mean we get to see more cartesian space on that layer so it needs to
+    // contain more flakes
+
+    // there might be a much more elegant way to calculate this, but I can't think of it
+
+
+
+    var largestWeight = 256 / opts.minZ;
+    var layerWeight = [];
+    var weightSum = 0;
+    var zPos = opts.minZ;
+
+    for (i = 0 ; i < NUM_FLAKE_LAYERS; i++)
+    {
+        // Assign a weight to every layer that is the largest flake width in relation to its own width
+        var w = 256 / zPos;
+        var weight = largestWeight / w;
+        layerWeight.push(weight);
+
+        //console.debug("width = %d", w);
+
+        weightSum += weight;
+        zPos += (opts.maxZ - opts.minZ) / opts.zSteps;
+    }
+
+
+    for (i = NUM_FLAKE_LAYERS - 1 ; i >= 0; i--)
+    {
+        var count = Math.round(NUM_FLAKES * (layerWeight[i]/weightSum));
+        console.log("layer %d: %d flakes", i, count);
+        for (var j=0; j < count; j++)
+        {
+            flakes.push(new Flake(raster, width, height, i));
+        }
+    }
+
+    //console.log("weights: %o, sum = %s, actual number of flakes: %d", layerWeight, weightSum, flakes.length);
+
+    return flakes;
+}
 window.onload = function ()
 {
     var palette = readPalette(document.getElementById("palette"));
@@ -167,17 +213,7 @@ window.onload = function ()
     document.body.appendChild(screen);
 
     var ctx = screen.getContext("2d");
-
-    var flakes = [];
-
-    var flakesPerSize =  NUM_FLAKES / NUM_FLAKE_LAYERS;
-
-    for (i=0; i < NUM_FLAKES; i++)
-    {
-        var sizeIndex = NUM_FLAKE_LAYERS - 1 - (i / flakesPerSize) | 0;
-        flakes.push(new Flake(raster, width, height, sizeIndex));
-    }
-
+    var flakes = populateFlakeLayers(raster, width, height);
     var drawLoop = function ()
     {
         ctx.clearRect(0,0,width,height);
