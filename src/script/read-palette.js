@@ -1,5 +1,10 @@
-module.exports = function(img)
+module.exports = function(img, alphaFactor)
 {
+    if (alphaFactor === undefined)
+    {
+        alphaFactor = 1.0;
+    }
+
     var width = img.width;
     var height = img.height;
 
@@ -19,9 +24,11 @@ module.exports = function(img)
             (data[i    ]|0) + "," +
             (data[i + 1]|0) + "," +
             (data[i + 2]|0) + "," +
-            (data[i + 3]/255) +
+            (data[i + 3]/255) * alphaFactor +
         ")")
     }
+
+    console.log("palette = ", l);
 
     return l;
 };

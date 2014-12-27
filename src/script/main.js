@@ -188,7 +188,7 @@ function populateFlakeLayers(raster, width, height)
 }
 window.onload = function ()
 {
-    var palette = readPalette(document.getElementById("palette"));
+    var palette = readPalette(document.getElementById("palette"), 0.33);
 
     //console.log("palette = ", palette);
 
