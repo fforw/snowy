@@ -6,6 +6,7 @@ var readPalette = require("./read-palette");
 
 var requestAnimationFrame = require("./requestAnimationFrame");
 
+var TAU = Math.PI * 2;
 
 // number of different flakes drawn
 var NUM_FLAKE_KINDS = 16;
@@ -83,6 +84,9 @@ function createFlakeSizes(flakeOpts)
     return l;
 }
 
+var latAngle = Math.random() * TAU;
+var latAngle2 = Math.random() * TAU;
+
 /**
  * Encapsulates runtime information for every single flake
  *
@@ -106,6 +110,9 @@ function Flake(raster, screenWidth, screenHeight, size)
     this.screenHeight = screenHeight;
     this.speed = SPEED * 0.75 + (Math.random() * SPEED * 0.25);
 
+    this.angle = 0;
+    this.spin = (Math.random() - 0.5) / 200;
+
     this.randomPos(false);
 }
 
@@ -121,10 +128,12 @@ Flake.prototype.randomPos = function(top)
 };
 Flake.prototype.draw = function(ctx)
 {
-    var number = (opts.maxZ - opts.minZ) / opts.zSteps;
-    var dy = this.speed / (opts.minZ + this.size * number);
+    var zPerStep = (opts.maxZ - opts.minZ) / opts.zSteps;
+    var z = (opts.minZ + this.size * zPerStep);
+    var dy = this.speed / z;
 
     var y = this.y;
+    this.x += (Math.sin(latAngle + this.x * TAU * 0.5 / this.screenWidth ) * 32  + Math.sin(latAngle2) * 32)/ z;
     y += dy;
 
     if (y > this.screenHeight)
@@ -136,7 +145,16 @@ Flake.prototype.draw = function(ctx)
         this.y = y;
     }
 
-    ctx.drawImage(this.img, this.x, this.y);
+    this.angle += this.spin;
+
+    ctx.save();
+    var hw = this.width / 2;
+    var hh = this.height / 2;
+    ctx.translate(this.x + hw, this.y + hh);
+    ctx.rotate(this.angle);
+    ctx.drawImage(this.img, -hw, -hh);
+    ctx.restore();
+
 };
 
 function populateFlakeLayers(raster, width, height)
@@ -221,9 +239,11 @@ window.onload = function ()
         for (i=0; i < NUM_FLAKES; i++)
         {
             var f = flakes[i];
-
             f.draw(ctx);
         }
+
+        latAngle += 0.0017;
+        latAngle2 += 0.0013;
 
         requestAnimationFrame(drawLoop);
     };
