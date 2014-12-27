@@ -1,66 +1,42 @@
 <!DOCTYPE html>
 <html>
+<head>
+    <title>snowy</title>
+    <style type="text/css">
 
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Snowy : HTML5 snow effect">
+        body {
+            margin: 0;
+            border: 0;
+            color: #fff;
+            overflow: hidden;
+            background: #240009;
+        }
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+        #palette
+        {
+            position: absolute;
+            left: -1000px;
+        }
 
-    <title>Snowy</title>
-  </head>
+        .footer
+        {
+            opacity: 0.5;
+            background: #000;
+            position: absolute;
+            right: 2ex;
+            bottom: 1em;
+            font-size: 12px;
+            padding: 0.5em 1ex;
+        }
 
-  <body>
+    </style>
+</head>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/fforw/snowy">View on GitHub</a>
-
-          <h1 id="project_title">Snowy</h1>
-          <h2 id="project_tagline">HTML5 snow effect</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/fforw/snowy/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/fforw/snowy/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="snowy-xmas" class="anchor" href="#snowy-xmas" aria-hidden="true"><span class="octicon octicon-link"></span></a>Snowy XMAS</h1>
-
-<p>A HTML5 snow effect.</p>
-
-<h2>
-<a id="prerequisites" class="anchor" href="#prerequisites" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisites</h2>
-
-<p>You need nodejs ( <a href="http://nodejs.org/">http://nodejs.org/</a> ). Make sure to execute "npm install" to download all npm dependencies
-after checking this out.</p>
-
-<p>You also need to install gulp globally with "npm install -g gulp" (might need sudo/root/Administrator privileges
-depending on your OS).</p>
-
-<h2>
-<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h2>
-
-<p>use "gulp" to just build, and "gulp watch" to enable streaming build.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Snowy maintained by <a href="https://github.com/fforw">fforw</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+<body>
+<p class="footer">
+    <a href="https://github.com/fforw/snowy/">View on github</a>
+</p>
+<img id="palette" src="media/snow-palette.png">
+<script type="text/javascript" src="main.js"></script>
+</body>
 </html>
