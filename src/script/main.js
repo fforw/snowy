@@ -99,6 +99,7 @@ function Flake(raster, screenWidth, screenHeight, size)
     this.height = this.img.height;
     this.screenWidth = screenWidth;
     this.screenHeight = screenHeight;
+    this.speed = SPEED * 0.75 + (Math.random() * SPEED * 0.25);
 
     this.randomPos(false);
 }
@@ -116,7 +117,7 @@ Flake.prototype.randomPos = function(top)
 Flake.prototype.draw = function(ctx)
 {
     var number = (opts.maxZ - opts.minZ) / opts.zSteps;
-    var dy = SPEED / (opts.minZ + this.size * number);
+    var dy = this.speed / (opts.minZ + this.size * number);
 
     var y = this.y;
     y += dy;
