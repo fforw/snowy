@@ -5,7 +5,7 @@ var browserify = require('browserify');
 var sourceStream = require("vinyl-source-stream");
 var mocha = require("gulp-mocha");
 var espower = require("gulp-espower");
-//var streamify = require('gulp-streamify')
+var streamify = require('gulp-streamify')
 
 var mainFile = "./src/script/main";
 
@@ -24,12 +24,11 @@ var paths = {
 gulp.task('script', function() {
 
     var stream = browserify({
-        entries: mainFile,
-        debug: true
+        entries: mainFile
     }).bundle();
 
     stream.pipe(sourceStream("main.js"))
-//        .pipe(streamify(uglify()))
+        .pipe(streamify(uglify()))
         .pipe(gulp.dest("build"));
 });
 
