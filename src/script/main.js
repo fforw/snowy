@@ -7,9 +7,14 @@ var readPalette = require("./read-palette");
 var requestAnimationFrame = require("./requestAnimationFrame");
 
 
+// number of different flakes drawn
 var NUM_FLAKE_KINDS = 16;
+// number of perspectivic flake layers
+var NUM_FLAKE_LAYERS = 10;
+// number of flakes to draw.
 var NUM_FLAKES = 128;
 
+// Flake speed (actual speed will randomly vary by 0.75 to 1.0 times of that)
 var SPEED = 64;
 
 // configuration options for createFlakeSizes()
@@ -19,7 +24,7 @@ var opts = {
     // end distance
     maxZ: 500,
     // distance steps to draw
-    zSteps: 16,
+    zSteps: NUM_FLAKE_LAYERS,
     // Z-position for which there is no blur
     focusZ: 125,
     // can be used to adjust the overall blur strength
@@ -165,11 +170,11 @@ window.onload = function ()
 
     var flakes = [];
 
-    var flakesPerSize =  NUM_FLAKES / NUM_FLAKE_KINDS;
+    var flakesPerSize =  NUM_FLAKES / NUM_FLAKE_LAYERS;
 
     for (i=0; i < NUM_FLAKES; i++)
     {
-        var sizeIndex = NUM_FLAKE_KINDS - 1 - (i / flakesPerSize) | 0;
+        var sizeIndex = NUM_FLAKE_LAYERS - 1 - (i / flakesPerSize) | 0;
         flakes.push(new Flake(raster, width, height, sizeIndex));
     }
 
