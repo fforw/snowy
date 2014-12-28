@@ -133,7 +133,7 @@ Flake.prototype.draw = function(ctx)
     var dy = this.speed / z;
 
     var y = this.y;
-    this.x += (Math.sin(latAngle + this.x * TAU * 0.5 / this.screenWidth ) * 32  + Math.sin(latAngle2) * 32)/ z;
+    this.x += (Math.sin(latAngle + this.x * TAU * 0.5 / this.screenWidth ) * 16  + Math.sin(latAngle2) * 16)/ z;
     y += dy;
 
     if (y > this.screenHeight)
