@@ -32,6 +32,13 @@ var opts = {
     blurMultiplier: 2
 };
 
+// current screen width
+var screenWidth;
+// current screen height
+var screenHeight;
+// holds the current flake instances
+var flakes;
+
 /**
  * Creates an array of canvases containing the different sizes and blurriness resulting from both
  * a perspective projection and a simulated lens focus blurriness.
@@ -91,14 +98,12 @@ var latAngle2 = Math.random() * TAU;
  * Encapsulates runtime information for every single flake
  *
  * @param raster        the array of canvases arrays
- * @param width
- * @param height
  * @param screenWidth
  * @param screenHeight
  * @param size
  * @constructor
  */
-function Flake(raster, screenWidth, screenHeight, size)
+function Flake(raster, size)
 {
     var kind = ((Math.random() * raster.length) | 0);
     this.img = raster[kind][size];
@@ -106,8 +111,6 @@ function Flake(raster, screenWidth, screenHeight, size)
 
     this.width = this.img.width;
     this.height = this.img.height;
-    this.screenWidth = screenWidth;
-    this.screenHeight = screenHeight;
     this.speed = SPEED * 0.75 + (Math.random() * SPEED * 0.25);
 
     this.angle = 0;
@@ -119,11 +122,11 @@ function Flake(raster, screenWidth, screenHeight, size)
 Flake.prototype.randomPos = function(top)
 {
 
-    this.x = -this.width +  Math.random() * ( this.screenWidth + this.width);
+    this.x = -this.width +  Math.random() * ( screenWidth + this.width);
     this.y = -this.height;
     if (!top)
     {
-        this.y += Math.random() * ( this.screenHeight + this.height);
+        this.y += Math.random() * ( screenHeight + this.height);
     }
 };
 Flake.prototype.draw = function(ctx)
@@ -133,10 +136,10 @@ Flake.prototype.draw = function(ctx)
     var dy = this.speed / z;
 
     var y = this.y;
-    this.x += (Math.sin(latAngle + this.x * TAU * 0.5 / this.screenWidth ) * 16  + Math.sin(latAngle2) * 16)/ z;
+    this.x += (Math.sin(latAngle + this.x * TAU * 0.5 / screenWidth ) * 16  + Math.sin(latAngle2) * 16)/ z;
     y += dy;
 
-    if (y > this.screenHeight)
+    if (y > screenHeight)
     {
         this.randomPos(true);
     }
@@ -157,9 +160,11 @@ Flake.prototype.draw = function(ctx)
 
 };
 
-function populateFlakeLayers(raster, width, height)
+function populateFlakeLayers(raster)
 {
-    var i, flakes = [];
+    var i;
+
+    flakes = [];
 
     var flakesPerSize = NUM_FLAKES / NUM_FLAKE_LAYERS;
 
@@ -196,14 +201,21 @@ function populateFlakeLayers(raster, width, height)
         console.log("layer %d: %d flakes", i, count);
         for (var j=0; j < count; j++)
         {
-            flakes.push(new Flake(raster, width, height, i));
+            flakes.push(new Flake(raster, i));
         }
     }
-
-    //console.log("weights: %o, sum = %s, actual number of flakes: %d", layerWeight, weightSum, flakes.length);
-
-    return flakes;
 }
+
+var timeoutId;
+
+function initDimension(screen)
+{
+    screenWidth = window.innerWidth - 1;
+    screenHeight = window.innerHeight - 1;
+    screen.width = screenWidth;
+    screen.height = screenHeight;
+}
+
 window.onload = function ()
 {
     var palette = readPalette(document.getElementById("palette"), 0.33);
@@ -223,18 +235,18 @@ window.onload = function ()
     }
 
     var screen = document.createElement("canvas");
-    var width = (window.innerWidth) & ~15;
-    var height = window.innerHeight - 4;
-    screen.width = width;
-    screen.height = height;
+    initDimension(screen);
 
     document.body.appendChild(screen);
 
     var ctx = screen.getContext("2d");
-    var flakes = populateFlakeLayers(raster, width, height);
+
+
+    populateFlakeLayers(raster);
+
     var drawLoop = function ()
     {
-        ctx.clearRect(0,0,width,height);
+        ctx.clearRect(0,0,screenWidth,screenHeight);
 
         for (i=0; i < NUM_FLAKES; i++)
         {
@@ -249,4 +261,17 @@ window.onload = function ()
     };
 
     requestAnimationFrame(drawLoop);
+
+    window.addEventListener("resize", function (ev)
+    {
+        if (timeoutId)
+        {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(function()
+        {
+            timeoutId = null;
+            initDimension(screen);
+        }, 200);
+    });
 };
