@@ -16,6 +16,6 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "es6-promise": "^2.0.1"
+    "gulp-if": "^1.2.5"
   }
 }

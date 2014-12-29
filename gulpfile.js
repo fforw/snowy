@@ -6,6 +6,7 @@ var sourceStream = require("vinyl-source-stream");
 var mocha = require("gulp-mocha");
 var espower = require("gulp-espower");
 var streamify = require('gulp-streamify')
+var gulpif = require("gulp-if");
 
 var mainFile = "./src/script/main";
 
@@ -17,18 +18,22 @@ var paths = {
     html: "src/*.html",
     media: "src/media/**/*",
     script: "src/script/**/*.js"
-}
+};
+
+
 
 // Basic usage
 
-gulp.task('script', function() {
+gulp.task('script', function()
+{
+    var compress = !process.env.NO_UGLIFY;
 
     var stream = browserify({
         entries: mainFile
     }).bundle();
 
     stream.pipe(sourceStream("main.js"))
-        .pipe(streamify(uglify()))
+        .pipe(gulpif(compress, streamify(uglify())))
         .pipe(gulp.dest("build"));
 });
 
