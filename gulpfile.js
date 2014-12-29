@@ -7,6 +7,7 @@ var mocha = require("gulp-mocha");
 var espower = require("gulp-espower");
 var streamify = require('gulp-streamify')
 var gulpif = require("gulp-if");
+var stripDebug = require('gulp-strip-debug');
 
 var mainFile = "./src/script/main";
 
@@ -34,6 +35,7 @@ gulp.task('script', function()
 
     stream.pipe(sourceStream("main.js"))
         .pipe(gulpif(compress, streamify(uglify())))
+        .pipe(gulpif(compress, streamify(stripDebug())))
         .pipe(gulp.dest("build"));
 });
 

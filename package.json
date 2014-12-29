@@ -16,6 +16,7 @@
     "vinyl-source-stream": "^1.0.0"
   },
   "dependencies": {
-    "gulp-if": "^1.2.5"
+    "gulp-if": "^1.2.5",
+    "gulp-strip-debug": "^1.0.2"
   }
 }
