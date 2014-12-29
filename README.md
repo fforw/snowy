@@ -2,6 +2,8 @@
 
 A HTML5 snow effect with random generated snow flakes.
 
+[Link to Demo](http://fforw.github.io/snowy/)
+
 ## Prerequisites
 
 You need nodejs ( http://nodejs.org/ ). Make sure to execute "npm install" to download all npm dependencies
